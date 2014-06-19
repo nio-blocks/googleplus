@@ -1,13 +1,7 @@
-import json
-from datetime import datetime
-from urllib.request import quote
 from .http_blocks.rest.rest_block import RESTPolling
 from nio.common.discovery import Discoverable, DiscoverableType
-from nio.metadata.properties.list import ListProperty
 from nio.metadata.properties.string import StringProperty
-from nio.metadata.properties.int import IntProperty
 from nio.common.signal.base import Signal
-from copy import deepcopy
 
 
 class GooglePlusSignal(Signal):
@@ -15,7 +9,7 @@ class GooglePlusSignal(Signal):
     def __init__(self, data):
         super().__init__()
         for k in data:
-            setattr(self, k, deepcopy(data[k]))
+            setattr(self, k, data[k])
 
 
 @Discoverable(DiscoverableType.block)
@@ -62,7 +56,7 @@ class GooglePlus(RESTPolling):
             headers['If-Modified-Since'] = self._modified
 
         self.url = self.URL_FORMAT.format(
-            quote(self.current_query),
+            self.current_query,
             self.limit,
             self.dev_key
         )
