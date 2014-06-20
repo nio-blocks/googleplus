@@ -11,8 +11,7 @@ class GPTestBlk(GooglePlus):
         super().__init__()
         self._event = event
 
-    def poll(self, paging=False):
-        super().poll(paging)
+    def _paging(self):
         self._event.set()
 
 class TestGooglePlus(NIOBlockTestCase):
