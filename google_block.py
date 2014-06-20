@@ -1,6 +1,9 @@
+from datetime import datetime
 from .http_blocks.rest.rest_block import RESTPolling
 from nio.common.discovery import Discoverable, DiscoverableType
 from nio.metadata.properties.string import StringProperty
+from nio.metadata.properties.timedelta import TimeDeltaProperty
+from nio.metadata.properties.int import IntProperty
 from nio.common.signal.base import Signal
 
 
@@ -19,12 +22,19 @@ class GooglePlus(RESTPolling):
                   "?query={0}&orderBy=recent&maxResults={1}&key={2}")
 
     dev_key = StringProperty(default='')
+    lookback = TimeDeltaProperty()
+    limit = IntProperty(default=20)
     
     def __init__(self):
         super().__init__()
         self._paging_field = 'nextPageToken'
         self._created_field = 'published'
         self._page_token = None
+
+    def configure(self, context):
+        super().configure(context)
+        lb = self._unix_time(datetime.utcnow() - self.lookback)
+        self._freshest = [lb] * self._n_queries
         
     def _process_response(self, resp):
         signals = []
@@ -41,7 +51,7 @@ class GooglePlus(RESTPolling):
         if len(posts) > 0:
             self.update_freshness(posts)
             fresh_posts = self.find_fresh_posts(posts)
-            paging = len(fresh_posts) == self.limit
+            paging = len(fresh_posts) == len(posts)
 
         signals = [GooglePlusSignal(p) for p in fresh_posts]
         self._logger.debug("Found %d fresh posts" % len(signals))
