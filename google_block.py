@@ -21,9 +21,9 @@ class GooglePlus(RESTPolling):
     URL_FORMAT = ("https://www.googleapis.com/plus/v1/activities"
                   "?query={0}&orderBy=recent&maxResults={1}&key={2}")
 
-    dev_key = StringProperty(default='')
-    lookback = TimeDeltaProperty()
-    limit = IntProperty(default=20)
+    dev_key = StringProperty(title='Developer Key', default='')
+    lookback = TimeDeltaProperty(title='Lookback Period')
+    limit = IntProperty(title='Limit', default=20)
     
     def __init__(self):
         super().__init__()
