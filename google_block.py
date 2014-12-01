@@ -75,3 +75,6 @@ class GooglePlus(RESTPolling):
             self.url = "%s&pageToken=%s" % (self.url, self._page_token)
 
         return headers
+
+    def _get_post_id(self, post):
+        return getattr(post, 'id', None)
