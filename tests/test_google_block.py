@@ -13,6 +13,7 @@ class GPTestBlk(GooglePlus):
 
     def _paging(self):
         self._event.set()
+        self._event.clear()
 
 class TestGooglePlus(NIOBlockTestCase):
 
@@ -51,4 +52,55 @@ class TestGooglePlus(NIOBlockTestCase):
         self.assertEqual(blk._freshest, [23])
         self.assert_num_signals_notified(1)
 
+        blk.stop()
+
+    @patch("requests.get")
+    @patch("requests.Response.json")
+    @patch("googleplus.google_block.GooglePlus.created_epoch")
+    def test_multiple_queries(self, mock_epoch, mock_json, mock_get):
+        mock_get.return_value = Response()
+        mock_get.return_value.status_code = 200
+        mock_epoch.return_value = 23
+        mock_json.return_value = {
+            'items': [
+                {'id': 'id1', 'key': 'val1'},
+                {'id': 'id2', 'key': 'val2'},
+                {'id': 'id3', 'key': 'val3'}
+            ]
+        }
+        e = Event()
+        blk = GPTestBlk(e)
+        self.configure_block(blk, {
+            "log_level": "DEBUG",
+            "polling_interval": {
+                "seconds": 1
+            },
+            "retry_interval": {
+                "seconds": 1
+            },
+            "queries": [
+                "foobar",
+                "foo",
+                "bar"
+            ],
+            "limit": 4,
+        })
+        blk._freshest = [22, 22, 22]
+        blk.start()
+        e.wait(2)
+        self.assert_num_signals_notified(3)
+        # second query should only emit one signal because
+        # the others are duplicates from first query.
+        mock_json.return_value = {
+            'items': [
+                {'id': 'id1', 'key': 'val1'},
+                {'id': 'id2', 'key': 'val2'},
+                {'id': 'id3', 'key': 'val3'},
+                {'id': 'id4', 'key': 'val4'}
+            ]
+        }
+        e.wait(2)
+        self.assert_num_signals_notified(4)
+        e.wait(2)
+        self.assert_num_signals_notified(4)
         blk.stop()
