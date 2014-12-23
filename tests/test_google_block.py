@@ -12,14 +12,14 @@ class GPTestBlk(GooglePlus):
         self._event = event
 
     def _paging(self):
+        self._locked_poll(True)
         self._event.set()
-        self._event.clear()
 
 class TestGooglePlus(NIOBlockTestCase):
 
     @patch("requests.get")
     @patch("requests.Response.json")
-    @patch("googleplus.google_block.GooglePlus.created_epoch")
+    @patch.object(GooglePlus, 'created_epoch')
     def test_process_responses(self, mock_epoch, mock_json, mock_get):
         mock_get.return_value = Response()
         mock_get.return_value.status_code = 200
@@ -56,7 +56,7 @@ class TestGooglePlus(NIOBlockTestCase):
 
     @patch("requests.get")
     @patch("requests.Response.json")
-    @patch("googleplus.google_block.GooglePlus.created_epoch")
+    @patch.object(GooglePlus, 'created_epoch')
     def test_multiple_queries(self, mock_epoch, mock_json, mock_get):
         mock_get.return_value = Response()
         mock_get.return_value.status_code = 200
@@ -88,6 +88,7 @@ class TestGooglePlus(NIOBlockTestCase):
         blk._freshest = [22, 22, 22]
         blk.start()
         e.wait(2)
+        e.clear()
         self.assert_num_signals_notified(3)
         # second query should only emit one signal because
         # the others are duplicates from first query.
@@ -100,7 +101,9 @@ class TestGooglePlus(NIOBlockTestCase):
             ]
         }
         e.wait(2)
+        e.clear()
         self.assert_num_signals_notified(4)
         e.wait(2)
+        e.clear()
         self.assert_num_signals_notified(4)
         blk.stop()
