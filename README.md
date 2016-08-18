@@ -26,15 +26,25 @@ Output
 ---------
 Creates a new signal for each Google Plus Post. Every field on the Post will become a signal attribute. Official documentation on the repsonse fields from Goolge Plus [here](https://developers.google.com/+/api/latest/activities#resource). The following is a list of commonly include attributes, but note that not all will be included on every signal:
 
--   `id`
--   `actor`
-  -   `displayName`
--   `title`
--   `object`
-  -   `content`
--   `url`
--   `actor`
-  -   `image`
-  -   `url`
--   `published`
--   `updated`
+```
+{
+  id: string,
+  actor: {
+    displayName: string
+  },
+  title: string,
+  object: {
+    content: string
+  },
+  url: string,
+  actor: {
+    id: string,
+    url: string,
+    image: {
+      url: string
+    }
+  },
+  published: datetime,
+  updated: datetime
+}
+```
