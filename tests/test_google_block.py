@@ -2,8 +2,8 @@ from ..google_block import GooglePlus
 from unittest.mock import patch
 from requests import Response
 from datetime import datetime, timedelta
-from nio.util.support.block_test_case import NIOBlockTestCase
-from nio.modules.threading import Event
+from nio.testing.block_test_case import NIOBlockTestCase
+from threading import Event
 
 
 class GPTestBlk(GooglePlus):
