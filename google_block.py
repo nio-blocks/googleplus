@@ -1,10 +1,10 @@
 from datetime import datetime
 from .http_blocks.rest.rest_block import RESTPolling
-from nio.common.discovery import Discoverable, DiscoverableType
-from nio.metadata.properties.string import StringProperty
-from nio.metadata.properties.timedelta import TimeDeltaProperty
-from nio.metadata.properties.int import IntProperty
-from nio.common.signal.base import Signal
+from nio.util.discovery import discoverable
+from nio.properties.string import StringProperty
+from nio.properties.timedelta import TimeDeltaProperty
+from nio.properties.int import IntProperty
+from nio.signal.base import Signal
 
 
 class GooglePlusSignal(Signal):
@@ -15,7 +15,7 @@ class GooglePlusSignal(Signal):
             setattr(self, k, data[k])
 
 
-@Discoverable(DiscoverableType.block)
+@discoverable
 class GooglePlus(RESTPolling):
 
     URL_FORMAT = ("https://www.googleapis.com/plus/v1/activities"
@@ -23,7 +23,8 @@ class GooglePlus(RESTPolling):
 
     dev_key = StringProperty(title='Developer Key',
                              default='[[GOOGLE_API_KEY]]')
-    lookback = TimeDeltaProperty(title='Lookback Period')
+    lookback = TimeDeltaProperty(title='Lookback Period',
+                                 default={"seconds":300})
     limit = IntProperty(title='Limit', default=20)
 
     def __init__(self):
@@ -34,7 +35,7 @@ class GooglePlus(RESTPolling):
 
     def configure(self, context):
         super().configure(context)
-        lb = self._unix_time(datetime.utcnow() - self.lookback)
+        lb = self._unix_time(datetime.utcnow() - self.lookback())
         self._freshest = [lb] * self._n_queries
 
     def _process_response(self, resp):
@@ -47,7 +48,7 @@ class GooglePlus(RESTPolling):
         resp = resp.json()
         fresh_posts = posts = resp.get('items', [])
         self._page_token = resp.get(self._paging_field)
-        self._logger.debug("Google+ response contains %d posts" % len(posts))
+        self.logger.debug("Google+ response contains %d posts" % len(posts))
 
         if len(posts) > 0:
             self.update_freshness(posts)
@@ -55,7 +56,7 @@ class GooglePlus(RESTPolling):
             paging = len(fresh_posts) == len(posts)
 
         signals = [GooglePlusSignal(p) for p in fresh_posts]
-        self._logger.debug("Found %d fresh posts" % len(signals))
+        self.logger.debug("Found %d fresh posts" % len(signals))
 
         return signals, paging
 
@@ -68,8 +69,8 @@ class GooglePlus(RESTPolling):
 
         self.url = self.URL_FORMAT.format(
             self.current_query,
-            self.limit,
-            self.dev_key
+            self.limit(),
+            self.dev_key()
         )
         if paging:
             self.url = "%s&pageToken=%s" % (self.url, self._page_token)
