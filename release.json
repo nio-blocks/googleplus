@@ -1,0 +1,7 @@
+{
+  "nio/GooglePlus": {
+    "Language": "Python",
+    "Reference": "github.com/nio-blocks/googleplus.git@v1.0.0",
+    "Version": "1.0.0"
+  }
+}
