@@ -1,37 +1,10 @@
 {
-    "nio/GooglePlus": {
-        "Category": "WebService",
-        "Commands": {},
-        "Properties": {
-            "retry_limit": {
-                "description": "When a url request fails, number of times to attempt a retry before giving up."
-            },
-            "queries": {
-                "description": "List of queries to search public posts for. Note that multi-word queries will search for posts that have all of the words but not as a single string."
-            },
-            "limit": {
-                "description": "Number of posts notified on each url request."
-            },
-            "polling_interval": {
-                "description": "How often API is polled. When using more than one query. Each query will be polled at a period equal to the `polling_interval` times the number of `queries`."
-            },
-            "retry_interval": {
-                "description": "When a url request fails, how long to wait before attempting to try again."
-            },
-            "lookback": {
-                "description": "On block start, look back this amount of time to grab old posts."
-            },
-            "dev_key": {
-                "description": "API credentials."
-            }
-        },
-        "Description": "Polls Google Plus for public posts. Official documentation of [Google Plus API](https://developers.google.com/+/api/latest/activities/search).",
-        "Input": {
-            "Description": "None"
-        },
-        "Version": "1.0.0",
-        "Output": {
-            "Description": "Creates a new signal for each Google Plus Post. Every field on the Post will become a signal attribute. Official documentation on the repsonse fields from Goolge Plus [here](https://developers.google.com/+/api/latest/activities#resource). The following is a list of commonly include attributes, but note that not all will be included on every signal:\n```\n{\nid: string,\nactor: {\ndisplayName: string\n},\ntitle: string,\nobject: {\ncontent: string\n},\nurl: string,\nactor: {\nid: string,\nurl: string,\nimage: {\nurl: string\n}\n},\npublished: datetime,\nupdated: datetime\n}\n```"
-        }
-    }
+  "nio/GooglePlus": {
+    "version": "0.0.1",
+    "description": "",
+    "inputs": {},
+    "outputs": {},
+    "properties": {},
+    "commands": {}
+  }
 }
