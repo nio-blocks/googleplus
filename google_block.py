@@ -1,10 +1,10 @@
 from datetime import datetime
-from .http_blocks.rest.rest_block import RESTPolling
-from nio.util.discovery import discoverable
-from nio.properties.string import StringProperty
-from nio.properties.timedelta import TimeDeltaProperty
-from nio.properties.int import IntProperty
+
+from nio.properties import VersionProperty, StringProperty, \
+    TimeDeltaProperty, IntProperty
 from nio.signal.base import Signal
+
+from .rest_polling.rest_block import RESTPolling
 
 
 class GooglePlusSignal(Signal):
@@ -15,16 +15,16 @@ class GooglePlusSignal(Signal):
             setattr(self, k, data[k])
 
 
-@discoverable
 class GooglePlus(RESTPolling):
 
+    version = VersionProperty("0.0.1")
     URL_FORMAT = ("https://www.googleapis.com/plus/v1/activities"
                   "?query={0}&orderBy=recent&maxResults={1}&key={2}")
 
     dev_key = StringProperty(title='Developer Key',
                              default='[[GOOGLE_API_KEY]]')
     lookback = TimeDeltaProperty(title='Lookback Period',
-                                 default={"seconds":300})
+                                 default={"seconds": 300})
     limit = IntProperty(title='Limit', default=20)
 
     def __init__(self):
