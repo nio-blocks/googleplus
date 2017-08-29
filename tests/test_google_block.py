@@ -1,11 +1,14 @@
-from ..google_block import GooglePlus
 from unittest.mock import patch
-from requests import Response
-from datetime import datetime, timedelta
-from nio.testing.block_test_case import NIOBlockTestCase
 from threading import Event
+from requests import Response
+
+from nio.testing.block_test_case import NIOBlockTestCase
+from nio.util.discovery import not_discoverable
+
+from ..google_block import GooglePlus
 
 
+@not_discoverable
 class GPTestBlk(GooglePlus):
     def __init__(self, event):
         super().__init__()
@@ -14,6 +17,7 @@ class GPTestBlk(GooglePlus):
     def _paging(self):
         self._locked_poll(True)
         self._event.set()
+
 
 class TestGooglePlus(NIOBlockTestCase):
 
