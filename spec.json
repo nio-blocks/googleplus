@@ -1,6 +1,6 @@
 {
   "nio/GooglePlus": {
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "Polls Google Plus for public posts. Official documentation of [Google Plus API](https://developers.google.com/+/api/latest/activities/search).",
     "properties": {
       "dev_key": {

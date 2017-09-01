@@ -17,7 +17,7 @@ class GooglePlusSignal(Signal):
 
 class GooglePlus(RESTPolling):
 
-    version = VersionProperty("0.0.1")
+    version = VersionProperty("1.0.0")
     URL_FORMAT = ("https://www.googleapis.com/plus/v1/activities"
                   "?query={0}&orderBy=recent&maxResults={1}&key={2}")
 
